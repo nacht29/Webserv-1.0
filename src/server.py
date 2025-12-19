@@ -1,5 +1,6 @@
 import sys
 import socket
+from header import *
 
 HOST, PORT = '', 8888
 
@@ -9,6 +10,8 @@ listen_socket.bind((HOST, PORT))
 listen_socket.listen(1)
 print(f"Serving HTTP on port {PORT} ...")
 
+Content_Type = HTTP_Content_Type()
+
 while True:
 	(client_connection, client_address) = listen_socket.accept()
 	request_data = client_connection.recv(1024)
@@ -17,7 +20,7 @@ while True:
 	content = "HELLO WORLD"
 	http_response = (
 		"HTTP/1.1 200 OK\r\n"
-		"Content-Type: text/plain\r\n"
+		f"Content-Type: {Content_Type.TEXT}\r\n"
 		f"Content-Length: {len(content)}\r\n"
 		"\r\n"
 		f"{content}"
