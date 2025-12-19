@@ -10,21 +10,31 @@ listen_socket.bind((HOST, PORT))
 listen_socket.listen(1)
 print(f"Serving HTTP on port {PORT} ...")
 
-Content_Type = HTTP_Content_Type()
 
 while True:
 	(client_connection, client_address) = listen_socket.accept()
-	request_data = client_connection.recv(1024)
-	print(request_data.decode('utf-8'))
+	try:
+		while True:		
+			http_request = client_connection.recv(1024)
 
-	content = "HELLO WORLD"
-	http_response = (
-		"HTTP/1.1 200 OK\r\n"
-		f"Content-Type: {Content_Type.TEXT}\r\n"
-		f"Content-Length: {len(content)}\r\n"
-		"\r\n"
-		f"{content}"
-	)
+			if not http_request:
+				break
 
-	client_connection.sendall(http_response.encode('utf-8'))
-	client_connection.close()
+			try:
+				print (http_request.decode('utf-8'))
+			except UnicodeDecodeError:
+				print('')
+				pass
+
+			content = "HELLO WORLD"
+			http_response = (
+				"HTTP/1.1 200 OK\r\n"
+				f"Content-Type: {HTTP_Content_Type.TEXT_PLAIN}\r\n"
+				f"Content-Length: {len(content)}\r\n"
+				"\r\n"
+				f"{content}"
+			)
+			client_connection.sendall(http_response.encode('utf-8'))
+	finally:
+		client_connection.close()
+
